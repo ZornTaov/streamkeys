@@ -1,22 +1,22 @@
 "use strict";
 
-var ko = require("ko"),
+var ko = require("tko"),
   _ = require("lodash");
 require("material-design-lite");
 
 var PopupViewModel = function PopupViewModel() {
   var self = this;
 
-  self.totalMusicTabs = ko.observable(1);
-  self.musicTabsLoaded = ko.observable(0);
-  self.musicTabs = ko.observableArray([]);
+  self.totalMusicTabs = window.tko.observable(1);
+  self.musicTabsLoaded = window.tko.observable(0);
+  self.musicTabs = window.tko.observableArray([]);
 
   // Tabs from disabled music sites to show in disabled list toggle
-  self.disabledMusicTabs = ko.observableArray([]);
-  self.disabledSitesOpen = ko.observable(false);
+  self.disabledMusicTabs = window.tko.observableArray([]);
+  self.disabledSitesOpen = window.tko.observable(false);
 
   // Filter hidden players and sort by priority -> siteName -> tabId
-  self.sortedMusicTabs = ko.pureComputed(function() {
+  self.sortedMusicTabs = window.tko.pureComputed(function() {
     var filteredGrouped = _.groupBy(
       _.filter(self.musicTabs(), function(tab) {
         return (tab.canPlayPause() || !tab.hidePlayer);
@@ -42,12 +42,12 @@ var PopupViewModel = function PopupViewModel() {
     return _.flatten(filteredGroupedSorted);
   });
 
-  self.isLoaded = ko.pureComputed(function() {
+  self.isLoaded = window.tko.pureComputed(function() {
     return self.musicTabsLoaded() == self.totalMusicTabs();
   });
 
-  self.visibleMusicTabs = ko.observableArray([]);
-  self.optionsUrl = ko.observable(chrome.runtime.getURL("html/options.html"));
+  self.visibleMusicTabs = window.tko.observableArray([]);
+  self.optionsUrl = window.tko.observable(chrome.runtime.getURL("html/options.html"));
 
   self.openOptionsPage = function() {
     window.open(self.optionsUrl());
@@ -109,6 +109,7 @@ PopupViewModel.prototype.updateState = function(stateData, tab, disabled) {
  * @param {Array} tabs - array of active music tabs
  */
 PopupViewModel.prototype.getTabStates = function(tabs) {
+  if (typeof tabs === "undefined") return;
   var that = this;
   that.totalMusicTabs(tabs.enabled.length + tabs.disabled.length);
 
@@ -148,17 +149,17 @@ var MusicTab = (function() {
 
     /** Override observables **/
     _.forEach(this.observableProperties, (function(property) {
-      this[property] = ko.observable(typeof attributes[property] !== "undefined" ? attributes[property] : null);
+      this[property] = window.tko.observable(typeof attributes[property] !== "undefined" ? attributes[property] : null);
     }).bind(this));
 
     /** Popup specific observables **/
-    this.songArtistText = ko.pureComputed(function() {
+    this.songArtistText = window.tko.pureComputed(function() {
       if(!this.song()) return "";
 
       return (this.artist()) ? this.artist() + " - " + this.song() : this.song();
     }, this);
 
-    this.settingsOpen = ko.observable(false);
+    this.settingsOpen = window.tko.observable(false);
 
     this.priority.subscribe(function(priority) {
       chrome.runtime.sendMessage({
@@ -194,11 +195,11 @@ var MusicTab = (function() {
 document.addEventListener("DOMContentLoaded", function() {
   window.popup = new PopupViewModel();
 
-  ko.applyBindings(window.popup);
+  window.tko.applyBindings(window.popup);
 
-  ko.bindingHandlers.scrollingSong = {
+  window.tko.bindingHandlers.scrollingSong = {
     update: function(element, valueAccessor) {
-      element.querySelector(".song-text").textContent = ko.unwrap(valueAccessor());
+      element.querySelector(".song-text").textContent = window.tko.unwrap(valueAccessor());
 
       if(element.querySelector(".song-text").scrollWidth > document.querySelector("#player").clientWidth) {
         var content = element.querySelector(".song-text").innerHTML;
@@ -208,9 +209,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
-  ko.bindingHandlers.slideMenu = {
+  window.tko.bindingHandlers.slideMenu = {
     update: function(element, valueAccessor) {
-      var value = ko.unwrap(valueAccessor());
+      var value = window.tko.unwrap(valueAccessor());
 
       if(value) {
         element.style.display = "block";

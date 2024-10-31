@@ -23,7 +23,7 @@
    * @param {String} command - name of the command to pass to the players
    */
   var sendAction = function(command) {
-    var active_tabs = window.skSites.getActiveMusicTabs();
+    var active_tabs = self.skSites.getActiveMusicTabs();
     active_tabs.then(function(tabs) {
       if (command === "mute" ||
           command === "stop" ||
@@ -127,19 +127,19 @@
    */
   chrome.runtime.onMessage.addListener(function(request, sender, response) {
     if(request.action === "update_keys") {
-      window.skSites.loadSettings();
+      self.skSites.loadSettings();
     }
     if(request.action === "update_site_settings") {
       console.log("updating site settings: ", request.siteKey, request.siteState);
-      window.skSites.setSiteState(request.siteKey, request.siteState).then(function() {
+      self.skSites.setSiteState(request.siteKey, request.siteState).then(function() {
         response(true);
       });
     }
     if(request.action === "get_sites") {
-      response(window.skSites.sites);
+      response(self.skSites.sites);
     }
     if(request.action === "get_site_controller") {
-      response(window.skSites.getController(sender.tab.url));
+      response(self.skSites.getController(sender.tab.url));
     }
     if(request.action === "inject_controller") {
       console.log("Inject: " + request.file + " into: " + sender.tab.id);
@@ -152,9 +152,9 @@
        * We should only inject into actual tabs
        */
       if(sender.tab.index === -1) return response("no_inject");
-      response(window.skSites.checkMusicSite(sender.tab.url));
+      response(self.skSites.checkMusicSite(sender.tab.url));
     }
-    if(request.action === "get_commands") response(window.coms);
+    if(request.action === "get_commands") response(self.coms);
     if(request.action === "command") processCommand(request);
     if(request.action === "update_player_state") {
       tabStates[sender.tab.id] = {
@@ -169,7 +169,7 @@
       if (mprisPort) handleStateData(updateMPRISState);
     }
     if(request.action === "get_music_tabs") {
-      var musicTabs = window.skSites.getMusicTabs();
+      var musicTabs = self.skSites.getMusicTabs();
       musicTabs.then(function(tabs) {
         response(tabs);
       });
@@ -177,8 +177,8 @@
       return true;
     }
     if(request.action === "send_change_notification") {
-      if (window.skSites.checkShowNotifications(sender.tab.url) &&
-          window.skSites.checkTabEnabled(sender.tab.id)) {
+      if (self.skSites.checkShowNotifications(sender.tab.url) &&
+          self.skSites.checkTabEnabled(sender.tab.id)) {
         sendChangeNotification(request, sender);
       }
     }
@@ -262,12 +262,12 @@
 
     // Store commands in global
     chrome.commands.getAll(function(cmds) {
-      window.coms = cmds;
+      self.coms = cmds;
     });
 
     // Define skSites as a sitelist in global context
-    window.skSites = new Sitelist();
-    window.skSites.loadSettings();
+    self.skSites = new Sitelist();
+    self.skSites.loadSettings();
   });
 
 
@@ -325,7 +325,7 @@
    *   tab. The command will be sent to all playing tabs anyway.
    */
   var handleStateData = function(func) {
-    var activeMusicTabs = window.skSites.getActiveMusicTabs();
+    var activeMusicTabs = self.skSites.getActiveMusicTabs();
     activeMusicTabs.then(function(tabs) {
       if (_.isEmpty(tabs)) {
         func(null, null);

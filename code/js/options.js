@@ -1,19 +1,19 @@
 "use strict";
 
-var ko = require("ko");
+var tko = require("tko");
 require("material-design-lite");
 
 var OptionsViewModel = function OptionsViewModel() {
   var self = this;
 
-  self.selectedTab = ko.observable("sites");
+  self.selectedTab = tko.observable("sites");
 
-  self.sitelistInitialized = ko.observable(false);
-  self.settingsInitialized = ko.observable(false);
-  self.sitelist = ko.observableArray([]);
-  self.commandList = ko.observableArray([]);
+  self.sitelistInitialized = tko.observable(false);
+  self.settingsInitialized = tko.observable(false);
+  self.sitelist = tko.observableArray([]);
+  self.commandList = tko.observableArray([]);
 
-  self.loadingComplete = ko.pureComputed(function() {
+  self.loadingComplete = tko.pureComputed(function() {
     return self.sitelistInitialized() && self.settingsInitialized();
   });
 
@@ -33,12 +33,12 @@ var OptionsViewModel = function OptionsViewModel() {
 
   // Load localstorage settings into observables
   chrome.storage.sync.get(function(obj) {
-    self.openOnUpdate = ko.observable(obj["hotkey-open_on_update"]);
+    self.openOnUpdate = tko.observable(obj["hotkey-open_on_update"]);
     self.openOnUpdate.subscribe(function(value) {
       chrome.storage.sync.set({ "hotkey-open_on_update": value });
     });
 
-    self.useMPRIS = ko.observable(obj["hotkey-use_mpris"]);
+    self.useMPRIS = tko.observable(obj["hotkey-use_mpris"]);
     self.useMPRIS.subscribe(function(value) {
       if (value) {
         chrome.permissions.contains({
@@ -60,12 +60,12 @@ var OptionsViewModel = function OptionsViewModel() {
       }
     });
 
-    self.youtubeRestart = ko.observable(obj["hotkey-youtube_restart"]);
+    self.youtubeRestart = tko.observable(obj["hotkey-youtube_restart"]);
     self.youtubeRestart.subscribe(function(value) {
       chrome.storage.sync.set({ "hotkey-youtube_restart": value });
     });
 
-    self.singlePlayerMode = ko.observable(obj["hotkey-single_player_mode"]);
+    self.singlePlayerMode = tko.observable(obj["hotkey-single_player_mode"]);
     self.singlePlayerMode.subscribe(function(value) {
       chrome.storage.sync.set({ "hotkey-single_player_mode": value });
       if (!value) self.useMPRIS(false);
@@ -130,12 +130,12 @@ var MusicSite = (function() {
     self.id = attributes.id;
     self.sanitizedId = attributes.id.replace(/[.,"']/g, "");
     self.name = attributes.name;
-    self.enabled = ko.observable(attributes.enabled);
-    self.priority = ko.observable(attributes.priority);
-    self.alias = ko.observableArray(attributes.alias || []);
-    self.showNotifications = ko.observable(attributes.showNotifications);
+    self.enabled = tko.observable(attributes.enabled);
+    self.priority = tko.observable(attributes.priority);
+    self.alias = tko.observableArray(attributes.alias || []);
+    self.showNotifications = tko.observable(attributes.showNotifications);
     self.removedAlias = [];
-    self.aliasText = ko.observable("");
+    self.aliasText = tko.observable("");
 
     self.toggleSite = function() {
       self.enabled(!self.enabled.peek());
@@ -188,9 +188,9 @@ var MusicSite = (function() {
 })();
 
 document.addEventListener("DOMContentLoaded", function() {
-  ko.applyBindings(new OptionsViewModel());
+  tko.applyBindings(new OptionsViewModel());
 
-  ko.bindingHandlers.priorityDropdown = {
+  tko.bindingHandlers.priorityDropdown = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
       var value = valueAccessor();
 
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
-  ko.bindingHandlers.aliasModal = {
+  tko.bindingHandlers.aliasModal = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
       var dialog = document.querySelector("#modal-" + bindingContext.$data.sanitizedId);
       var closeButton = dialog.querySelector(".close-button");

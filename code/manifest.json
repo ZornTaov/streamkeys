@@ -1,36 +1,58 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "homepage_url": "http://www.streamkeys.com",
-  "icons": {"48": "icon48.png", "128": "icon128.png"},
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "options_page": "html/options.html",
   "background": {
-    "scripts": ["js/background.js"]
+    "service_worker": "js/background.js"
   },
-  "browser_action": {
-    "default_title": "Streamkeys",
-    "default_popup": "html/popup.html",
-    "default_icon": "icon38.png"
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["js/contentscript.js"]
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/contentscript.js"
+      ]
     },
     {
-      "matches": ["*://*.streamkeys.com/*"],
-      "js": ["js/inject/sksite_inject.js"]
+      "matches": [
+        "*://*.streamkeys.com/*"
+      ],
+      "js": [
+        "js/inject/sksite_inject.js"
+      ]
     }
   ],
   "web_accessible_resources": [
-    "js/inject/hoopla_inject.js",
-    "js/inject/musickit_inject.js",
-    "js/inject/palcomp3_inject.js",
-    "js/inject/seesu_inject.js",
-    "js/controllers/*"
+    {
+      "resources": [
+        "js/inject/hoopla_inject.js",
+        "js/inject/musickit_inject.js",
+        "js/inject/palcomp3_inject.js",
+        "js/inject/seesu_inject.js",
+        "js/controllers/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ],
-  "permissions": ["tabs", "storage", "http://*/*", "https://*/*"],
-  "optional_permissions": [ "notifications", "nativeMessaging"],
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "optional_permissions": [
+    "notifications",
+    "nativeMessaging"
+  ],
   "commands": {
     "playPause": {
       "suggested_key": {
@@ -80,5 +102,14 @@
       "global": true,
       "description": "Send notification of player(s) state"
     }
-  }
+  },
+  "action": {
+    "default_title": "Streamkeys",
+    "default_popup": "html/popup.html",
+    "default_icon": "icon38.png"
+  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ]
 }
