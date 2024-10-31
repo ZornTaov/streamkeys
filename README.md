@@ -4,7 +4,7 @@ Chrome extension to send "global" (ie. across the browser) hotkeys to various on
 
 It is available on the Chrome Store:
 
-https://chrome.google.com/webstore/detail/streamkeys/ekpipjofdicppbepocohdlgenahaneen?hl=en
+Link removed as the chrome store version had malware, sad times
 
 ## Installation
 
