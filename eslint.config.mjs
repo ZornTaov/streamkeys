@@ -27,7 +27,7 @@ export default [
                 require: true,
                 define: true,
                 module: true,
-                $data: true,
+                $data: true
             },
 
             ecmaVersion: 2020,

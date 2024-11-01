@@ -144,7 +144,7 @@
     }
     if(request.action === "inject_controller") {
       console.log("Inject: " + request.file + " into: " + sender.tab.id);
-      chrome.tabs.executeScript(sender.tab.id, {file: request.file});
+      chrome.scripting.executeScript(sender.tab.id, {file: request.file});
       if (mprisPort) mprisPort.postMessage({ command: "add_player" });
     }
     if(request.action === "check_music_site") {

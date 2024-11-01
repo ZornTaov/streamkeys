@@ -47,7 +47,8 @@
   ],
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "scripting"
   ],
   "optional_permissions": [
     "notifications",
