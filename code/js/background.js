@@ -1,5 +1,6 @@
 "use strict";
 (function() {
+  const keepAliveInterval = setInterval(() => chrome.runtime.sendMessage({ status: "keep-alive" }), 29.5 * 1000);
   var Sitelist = require("./modules/Sitelist.js"),
     _ = require("lodash");
 
